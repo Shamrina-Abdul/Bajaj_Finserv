@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>JSON Data Rendering</title>
+  <style>
+    /* CSS for the UI */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Developer Data</h1>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search by name...">
+        <select id="filter-select">
+            <option value="">Filter by designation/skills</option>
+            <option value="Developer">Developer</option>
+            <option value="Designer">Designer</option>
+            <option value="Project Manager">Project Manager</option>
+        </select>
+    </div>
+  <h1>JSON Data Rendering</h1>
+  <table id="data-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Designation</th>
+        <th>Skills</th>
+      </tr>
+    </thead>
+    <tbody id="data-body"></tbody>
+  </table>
+
+  <script>
+    // Function to fetch JSON data from URL
+    function fetchJSONData(url) {
+      return fetch(url)
+        .then(response => response.json())
+        .then(data => data.employees)
+        .catch(error => {
+          console.error('Error:', error);
+          return [];
+        });
+    }
+
+    // Function to generate HTML table rows from JSON data
+    function generateTableRows(data) {
+      const tableBody = document.getElementById('data-body');
+
+      data.forEach(employee => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${employee.id}</td>
+          <td>${employee.name || '-'}</td>
+          <td>${employee.designation || '-'}</td>
+          <td>${employee.skills.join(', ')}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Fetch JSON data from the provided URL and generate table rows
+    fetchJSONData('https://raw.githubusercontent.com/dixitsoham7/dixitsoham7.github.io/main/index.json')
+      .then(data => generateTableRows(data));
+    
+    // Event listener for search input
+    document.querySelector('#search-input').addEventListener('input', function (event) {
+            filterByName(event.target.value);
+        });
+
+    // Event listener for filter select
+    document.querySelector('#filter-select').addEventListener('change', function (event) {
+            filterByDesignationSkills(event.target.value);
+        });
+  
+  </script>
+</body>
+</html>

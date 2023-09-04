@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Developer Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .search-container input {
+            padding: 8px;
+            width: 300px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .project-table {
+            margin-top: 20px;
+        }
+
+        .team-size-column, .completed-tasks-column {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Developer Data</h1>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search by name...">
+        <select id="filter-select">
+            <option value="">Filter by designation/skills</option>
+            <option value="Developer">Developer</option>
+            <option value="Designer">Designer</option>
+            <option value="Project Manager">Project Manager</option>
+        </select>
+    </div>
+    <table id="developers-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Designation</th>
+                <th>Skills</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div class="project-table">
+        <table id="projects-table">
+            <thead>
+                <tr>
+                    <th>Project</th>
+                    <th>Team Size</th>
+                    <th>Completed Tasks</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        // JSON data
+        const jsonData = {
+            "developers": [
+                {
+                    "name": "John Doe",
+                    "designation": "Developer",
+                    "skills": ["HTML", "CSS", "JavaScript"]
+                },
+                {
+                    "name": "Jane Smith",
+                    "designation": "Designer",
+                    "skills": ["UI/UX", "Photoshop", "Illustrator"]
+                },
+                {
+                    "name": "Mark Johnson",
+                    "designation": "Project Manager",
+                    "skills": ["Agile", "Scrum", "Team Management"]
+                }
+            ],
+            "projects": [
+                {
+                    "projectName": "Project A",
+                    "teamSize": 5,
+                    "completedTasks": 10
+                },
+                {
+                    "projectName": "Project B",
+                    "teamSize": 3,
+                    "completedTasks": 5
+                },
+                {
+                    "projectName": "Project C",
+                    "teamSize": 7,
+                    "completedTasks": 15
+                }
+            ]
+        };
+
+        // Function to render the developers table
+        function renderDevelopersTable(data) {
+            const tableBody = document.querySelector('#developers-table tbody');
+
+            // Clear previous data
+            tableBody.innerHTML = '';
+
+            data.forEach(developer => {
+                const row = document.createElement('tr');
+                const nameCell = document.createElement('td');
+                const designationCell = document.createElement('td');
+                const skillsCell = document.createElement('td');
+
+                nameCell.textContent = developer.name;
+                designationCell.textContent = developer.designation;
+                skillsCell.textContent = developer.skills.join(', ');
+
+                row.appendChild(nameCell);
+                row.appendChild(designationCell);
+                row.appendChild(skillsCell);
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to render the projects table
+        function renderProjectsTable(data) {
+            const tableBody = document.querySelector('#projects-table tbody');
+
+            // Clear previous data
+            tableBody.innerHTML = '';
+
+            data.forEach(project => {
+                const row = document.createElement('tr');
+                const projectNameCell = document.createElement('td');
+                const teamSizeCell = document.createElement('td');
+                const completedTasksCell = document.createElement('td');
+
+                projectNameCell.textContent = project.projectName;
+                teamSizeCell.textContent = project.teamSize;
+                completedTasksCell.textContent = project.completedTasks;
+
+                row.appendChild(projectNameCell);
+                row.appendChild(teamSizeCell);
+                row.appendChild(completedTasksCell);
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to filter developers by name
+        function filterByName(name) {
+            const filteredData = jsonData.developers.filter(developer =>
+                developer.name.toLowerCase().includes(name.toLowerCase())
+            );
+            renderDevelopersTable(filteredData);
+        }
+
+        // Function to filter developers by designation/skills
+        function filterByDesignationSkills(filterValue) {
+            if (!filterValue) {
+                renderDevelopersTable(jsonData.developers);
+                return;
+            }
+
+            const filteredData = jsonData.developers.filter(developer =>
+                developer.designation.toLowerCase() === filterValue.toLowerCase() ||
+                developer.skills.some(skill => skill.toLowerCase() === filterValue.toLowerCase())
+            );
+            renderDevelopersTable(filteredData);
+        }
+
+        // Event listener for search input
+        document.querySelector('#search-input').addEventListener('input', function (event) {
+            filterByName(event.target.value);
+        });
+
+        // Event listener for filter select
+        document.querySelector('#filter-select').addEventListener('change', function (event) {
+            filterByDesignationSkills(event.target.value);
+        });
+
+        // Initial rendering
+        renderDevelopersTable(jsonData.developers);
+        renderProjectsTable(jsonData.projects);
+    </script>
+</body>
+</html>
